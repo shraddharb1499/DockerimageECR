@@ -1,12 +1,19 @@
-FROM golang:1.17
+FROM ubuntu:18.04
 
-WORKDIR /usr/src/app
+# Install dependencies
+RUN apt-get update && \
+ apt-get -y install apache2
 
-# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
+# Install apache and write hello world message
+RUN echo 'Hello World!' > /var/www/html/index.html
 
-COPY . .
-RUN go build -v -o /usr/local/bin/app ./...
+# Configure apache
+RUN echo '. /etc/apache2/envvars' > /root/run_apache.sh && \
+ echo 'mkdir -p /var/run/apache2' >> /root/run_apache.sh && \
+ echo 'mkdir -p /var/lock/apache2' >> /root/run_apache.sh && \ 
+ echo '/usr/sbin/apache2 -D FOREGROUND' >> /root/run_apache.sh && \ 
+ chmod 755 /root/run_apache.sh
 
-CMD ["app"]
+EXPOSE 80
+
+CMD /root/run_apache.sh
