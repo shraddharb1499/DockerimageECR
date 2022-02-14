@@ -1,13 +1,12 @@
-FROM golang:1.12-alpine AS build
-#Install git
-RUN apk add --no-cache git
-#Get the hello world package from a GitHub repository
-RUN go get github.com/shraddharb1499/DockerimageECR/index.html
-WORKDIR /go/src/github.com/shraddharb1499/DockerimageECR/index.html
-# Build the project and send the output to /bin/HelloWorld 
-RUN go build -o /bin/HelloWorld
+FROM golang:1.17
 
-FROM golang:1.12-alpine
-#Copy the build's output binary from the previous build container
-COPY --from=build /bin/HelloWorld /bin/HelloWorld
-ENTRYPOINT ["/bin/HelloWorld"]
+WORKDIR /usr/src/app
+
+# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
+
+COPY . .
+RUN go build -v -o /usr/local/bin/app ./...
+
+CMD ["app"]
