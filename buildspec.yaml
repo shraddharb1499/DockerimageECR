@@ -8,10 +8,10 @@ env:
 phases:
   pre_build:
     commands:
-      - echo logging in docker hub
-      - docker login --username $DOCKERHUB_USERNAME --password-stdin $DOCKERHUB_PASSWORD
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 804295906245.dkr.ecr.us-east-1.amazonaws.com
+      - echo logging in docker hub
+      - docker login --username $DOCKERHUB_USERNAME --password-stdin $DOCKERHUB_PASSWORD
   build:
     commands:
       - echo Build started on `date`
