@@ -2,8 +2,8 @@ version: 0.2
 env:
   shell: bash
   parameter-store:
-    DOCKERHUB_USERNAME: todocker:Username
-    DOCKERHUB_PASSWORD: todocker:DockerPassword
+    DOCKERHUB_USERNAME: dockerlogin:Username
+    DOCKERHUB_PASSWORD: dockerlogin:DockerPassword
 
 phases:
   pre_build:
